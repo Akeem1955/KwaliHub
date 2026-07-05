@@ -1,0 +1,130 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  ADMIN
+  STEWARD
+  PANEL
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password_hash String
+  role          Role      @default(STEWARD)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  stewards      Steward[]
+}
+
+model Terminal {
+  id             String            @id @default(uuid())
+  community_name String
+  latitude       Float
+  longitude      Float
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  sensorReadings SensorReading[]
+  stewards       Steward[]
+  stewardActivities StewardActivity[]
+  households     Household[]
+  proposals      Proposal[]
+}
+
+model Steward {
+  id                              String    @id @default(uuid())
+  name                            String
+  status                          String    @default("ACTIVE")
+  eligibility_checklist_completed Boolean   @default(false)
+  createdAt                       DateTime  @default(now())
+  updatedAt                       DateTime  @updatedAt
+
+  userId                          String
+  user                            User      @relation(fields: [userId], references: [id])
+  
+  terminalId                      String
+  terminal                        Terminal  @relation(fields: [terminalId], references: [id])
+
+  stewardActivities               StewardActivity[]
+}
+
+model SensorReading {
+  id            String    @id @default(uuid())
+  timestamp     DateTime  @default(now())
+  flow_rate     Float
+  water_quality String    // e.g., "PASS", "FAIL"
+  energy_use    Float
+  pump_status   String    // e.g., "OPERATIONAL", "DEGRADED", "BROKEN"
+
+  terminalId    String
+  terminal      Terminal  @relation(fields: [terminalId], references: [id])
+}
+
+model StewardActivity {
+  id                 String    @id @default(uuid())
+  timestamp          DateTime  @default(now())
+  transactions_count Int
+  revenue            Float
+  reported_issue     String?
+
+  stewardId          String
+  steward            Steward   @relation(fields: [stewardId], references: [id])
+  
+  terminalId         String
+  terminal           Terminal  @relation(fields: [terminalId], references: [id])
+}
+
+model Household {
+  id             String    @id @default(uuid())
+  community_name String
+  stated_barrier String    // e.g., "distance", "cost", "distrust"
+  consent_logged Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+
+  terminalId     String
+  terminal       Terminal  @relation(fields: [terminalId], references: [id])
+
+  contact        HouseholdContact?
+  nudges         Nudge[]
+}
+
+model HouseholdContact {
+  id           String    @id @default(uuid())
+  phone_number String
+  
+  householdId  String    @unique
+  household    Household @relation(fields: [householdId], references: [id])
+}
+
+model Proposal {
+  id                String    @id @default(uuid())
+  type              String    // e.g., "business_model", "sanitation_design"
+  generated_content String
+  status            String    @default("PENDING") // PENDING, APPROVED, REJECTED, REFINED
+  reviewer_notes    String?
+  createdAt         DateTime  @default(now())
+
+  terminalId        String
+  terminal          Terminal  @relation(fields: [terminalId], references: [id])
+}
+
+model Nudge {
+  id           String    @id @default(uuid())
+  message_text String
+  channel      String    // e.g., "sms", "voice"
+  status       String    @default("GENERATED") // GENERATED, DELIVERED
+  createdAt    DateTime  @default(now())
+
+  householdId  String
+  household    Household @relation(fields: [householdId], references: [id])
+}
