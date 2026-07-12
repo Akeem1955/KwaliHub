@@ -107,8 +107,15 @@ export async function seedSimulation() {
   }
 }
 
+export type TickOptions = {
+  forceFailure?: string; // Terminal community_name to force fail
+  failureType?: string; // "DEGRADED" | "BROKEN" | "OPERATIONAL"
+  waterQualityFail?: boolean; // Force FAIL water quality
+  revenueMultiplier?: number; // Multiplier (e.g. 0.5, 1.5)
+};
+
 // Generate one tick (e.g. 1 day) of data for all terminals
-export async function simulateTick(dateOverride?: Date) {
+export async function simulateTick(dateOverride?: Date, options?: TickOptions) {
   const terminals = await prisma.terminal.findMany({ include: { stewards: true } });
   const timestamp = dateOverride || new Date();
 
@@ -119,8 +126,18 @@ export async function simulateTick(dateOverride?: Date) {
     if (rand > 0.95) pump_status = "BROKEN";
     else if (rand > 0.85) pump_status = "DEGRADED";
 
+    let water_quality = Math.random() > 0.9 ? "FAIL" : "PASS"; // 10% chance of bad quality
+
+    if (options?.forceFailure === terminal.community_name) {
+      if (options.failureType) {
+        pump_status = options.failureType;
+      }
+      if (options.waterQualityFail !== undefined) {
+        water_quality = options.waterQualityFail ? "FAIL" : "PASS";
+      }
+    }
+
     const flow_rate = pump_status === "BROKEN" ? 0 : (pump_status === "DEGRADED" ? Math.random() * 5 + 2 : Math.random() * 10 + 10);
-    const water_quality = Math.random() > 0.9 ? "FAIL" : "PASS"; // 10% chance of bad quality
     const energy_use = pump_status === "BROKEN" ? 0 : flow_rate * 2.5;
 
     await prisma.sensorReading.create({
@@ -137,7 +154,10 @@ export async function simulateTick(dateOverride?: Date) {
     // Steward Activity (only if they have a steward)
     if (terminal.stewards.length > 0) {
       const steward = terminal.stewards[0];
-      const transactions = pump_status === "BROKEN" ? 0 : Math.floor(Math.random() * 50) + 10;
+      let transactions = pump_status === "BROKEN" ? 0 : Math.floor(Math.random() * 50) + 10;
+      if (options?.revenueMultiplier !== undefined) {
+        transactions = Math.floor(transactions * options.revenueMultiplier);
+      }
       const revenue = transactions * 50; // 50 Naira per transaction
       
       let issue = null;
