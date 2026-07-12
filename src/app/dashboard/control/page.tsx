@@ -6,7 +6,7 @@ import {
   Terminal, Database, Cpu, Activity, Play, Zap,
   CheckCircle2, Circle, Loader2, ArrowRight, RotateCcw,
   Sparkles, ChevronRight, Sliders, ToggleLeft, ToggleRight,
-  TrendingDown, ShieldAlert
+  TrendingDown, ShieldAlert, FastForward
 } from 'lucide-react';
 
 /* ─────────────────────────────────────────────
@@ -18,7 +18,7 @@ type LogEntry = {
   type: 'info' | 'success' | 'error' | 'loading' | 'ai';
 };
 
-type Phase = 'idle' | 'wipe' | 'seed' | 'backfill' | 'twin' | 'complete';
+type Phase = 'idle' | 'wipe' | 'seed' | 'backfill' | 'tick' | 'twin' | 'complete';
 
 type TwinStatus = {
   totalTerminals: number;
@@ -72,18 +72,29 @@ const PHASES: {
   },
   {
     id: 'backfill',
-    title: 'Phase 3: Simulate Time',
-    subtitle: 'Step-by-Step / Configurable Days',
-    description: 'Advance time daily or in batches. IoT sensors generate flow rates, water quality, and energy. Configure dynamic anomalies or adjust revenue below before running.',
-    icon: Activity,
+    title: 'Phase 3: Simulate 30 Days',
+    subtitle: 'Time-Lapse Telemetry',
+    description: 'Fast-forward 30 days. IoT sensors generate flow rates, water quality, and energy. Pumps will intentionally degrade. Revenue will fluctuate. Anomalies will emerge.',
+    icon: FastForward,
     color: 'text-blue-400',
     bg: 'bg-blue-500/10',
     border: 'border-blue-500/30',
     glow: 'shadow-[0_0_20px_rgba(59,130,246,0.15)]',
   },
   {
+    id: 'tick',
+    title: 'Phase 4: Simulate 1 Day (Dynamic)',
+    subtitle: 'Step-by-Step Injection',
+    description: 'Advance time day-by-day. Use the configurator below to manually force pump failures, water pollution, or adjust steward revenue before generating the daily tick.',
+    icon: Activity,
+    color: 'text-amber-400',
+    bg: 'bg-amber-500/10',
+    border: 'border-amber-500/30',
+    glow: 'shadow-[0_0_20px_rgba(245,158,11,0.15)]',
+  },
+  {
     id: 'twin',
-    title: 'Phase 4: Activate the AI',
+    title: 'Phase 5: Activate the AI',
     subtitle: 'One Terminal at a Time',
     description: 'This is the magic moment. Each click sends ONE terminal\'s anomaly data to Gemini. The AI generates a tailored business model proposal. Click again for the next terminal.',
     icon: Sparkles,
@@ -139,14 +150,15 @@ export default function SimulationControlPage() {
   function getActivePhase(): Phase {
     if (!completedPhases.has('wipe')) return 'wipe';
     if (!completedPhases.has('seed')) return 'seed';
-    // Backfill state is completed if we simulated at least some days
-    if (simulatedDaysCount === 0) return 'backfill';
+    if (!completedPhases.has('backfill')) return 'backfill';
+    // The user can tick dynamically as many times as they want before doing AI, but needs at least 1 tick completed to proceed cleanly (optional, but requested as a step)
+    if (!completedPhases.has('tick') && simulatedDaysCount === 0) return 'tick';
     if (!completedPhases.has('twin')) return 'twin';
     return 'complete';
   }
 
   function getPhaseState(phaseId: Phase): 'locked' | 'active' | 'done' {
-    if (phaseId === 'backfill' && simulatedDaysCount > 0) return 'done';
+    if (phaseId === 'tick' && simulatedDaysCount > 0) return 'done';
     if (completedPhases.has(phaseId)) return 'done';
     if (getActivePhase() === phaseId) return 'active';
     return 'locked';
@@ -180,6 +192,23 @@ export default function SimulationControlPage() {
           break;
 
         case 'backfill':
+          addLog('▸ Simulating 30 Days of historic telemetry data...', 'loading');
+          const backfillRes = await fetch('/api/simulate/backfill', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ days: 30 }),
+          });
+          const backfillData = await backfillRes.json();
+          if (backfillRes.ok) {
+            addLog(`✓ ${backfillData.message}`, 'success');
+            setCompletedPhases(prev => new Set(prev).add('backfill'));
+            await refreshTwinStatus();
+          } else {
+            addLog(`✗ Failed to run backfill: ${backfillData.error}`, 'error');
+          }
+          break;
+
+        case 'tick':
           addLog(`▸ Simulating ${simulateDays} Day(s) of custom IoT telemetry...`, 'loading');
           
           const tickRes = await fetch('/api/simulate/tick', {
@@ -205,7 +234,7 @@ export default function SimulationControlPage() {
             }
             addLog(`  Revenue multiplier applied: ${revenueMultiplier}x`, 'info');
             setSimulatedDaysCount(prev => prev + simulateDays);
-            // Fetch initial twin status
+            setCompletedPhases(prev => new Set(prev).add('tick'));
             await refreshTwinStatus();
           } else {
             addLog(`✗ Failed to run tick: ${tickData.error}`, 'error');
@@ -366,7 +395,7 @@ export default function SimulationControlPage() {
                           </h2>
                           {isDone && (
                             <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                              {phase.id === 'backfill' ? `${simulatedDaysCount} Days Simulated` : 'Complete'}
+                              {phase.id === 'tick' ? `${simulatedDaysCount} Days Simulated` : 'Complete'}
                             </span>
                           )}
                         </div>
@@ -441,12 +470,12 @@ export default function SimulationControlPage() {
                             )}
                           </motion.button>
                         )}
-                        {isDone && phase.id === 'backfill' && (
+                        {isDone && phase.id === 'tick' && (
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             disabled={isRunning}
-                            onClick={() => executePhase('backfill')}
+                            onClick={() => executePhase('tick')}
                             className="flex items-center space-x-2 px-4 py-2 border border-slate-700 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all"
                           >
                             <span>Simulate More</span>
@@ -477,7 +506,7 @@ export default function SimulationControlPage() {
                 </h3>
               </div>
               <p className="text-xs text-slate-500 -mt-3">
-                Configure these options before clicking "Execute" on Phase 3: Simulate Time.
+                Configure these options before clicking "Execute" on Phase 4: Simulate 1 Day (Dynamic).
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
