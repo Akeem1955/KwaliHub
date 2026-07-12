@@ -8,6 +8,21 @@ const COMMUNITIES = [
 
 const BARRIERS = ["distance", "cost", "distrust", "forgetfulness", "cultural preference"];
 
+export async function wipeDatabase() {
+  console.log("Wiping all simulation data...");
+  // Delete in reverse dependency order
+  await prisma.nudge.deleteMany({});
+  await prisma.proposal.deleteMany({});
+  await prisma.householdContact.deleteMany({});
+  await prisma.household.deleteMany({});
+  await prisma.sensorReading.deleteMany({});
+  await prisma.stewardActivity.deleteMany({});
+  await prisma.steward.deleteMany({});
+  await prisma.terminal.deleteMany({});
+  await prisma.user.deleteMany({});
+  console.log("Database successfully wiped.");
+}
+
 // Seeds Terminals, Households, and Admin users if they don't exist
 export async function seedSimulation() {
   const terminalCount = await prisma.terminal.count();
