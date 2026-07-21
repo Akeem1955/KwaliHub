@@ -96,7 +96,7 @@ export async function processDigitalTwin() {
     const isFailing = latestReading.pump_status === "BROKEN" || latestReading.pump_status === "DEGRADED";
     
     // 1. Business Model Proposal Generation
-    const avgRevenue = terminal.stewardActivities.reduce((sum: number, act) => sum + act.revenue, 0) / (terminal.stewardActivities.length || 1);
+const avgRevenue = terminal.stewardActivities.reduce((sum: number, act: { revenue: number }) => sum + act.revenue, 0) / (terminal.stewardActivities.length || 1);
     
     if (isFailing || avgRevenue < 1000) {
       const existing = await prisma.proposal.findFirst({
