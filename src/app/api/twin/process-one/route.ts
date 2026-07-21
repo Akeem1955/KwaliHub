@@ -64,7 +64,7 @@ export async function POST() {
     const latestReading = terminal.sensorReadings[0];
 
     const avgRevenue =
-      terminal.stewardActivities.reduce((sum: number, act) => sum + act.revenue, 0) /
+      terminal.stewardActivities.reduce((sum: number, act: { revenue: number }) => sum + act.revenue, 0) /
       (terminal.stewardActivities.length || 1);
 
     const prompt = `You are a WASH (Water, Sanitation, and Hygiene) system analyst in Kwali, Nigeria.
