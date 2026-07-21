@@ -1,0 +1,456 @@
+KwaliHub / WASH-AI Nexus — Project Documentation
+
+1) Project overview
+WASH-AI Nexus (this repo) is a Next.js platform that simulates and visualizes a closed-loop system for Water, Sanitation, and Hygiene (WASH) in Kwali Area Council (FCT), Nigeria.
+
+The app models:
+- 15 water terminals across communities
+- IoT telemetry per terminal (flow rate, pump status, water quality, energy use)
+- Steward activity (transactions, revenue, reported issues)
+- Households with a stated barrier + consent flag
+- Generative AI (Gemini) that creates proposals:
+  - Business model proposals for stewards (from a fixed set of 8 strategies)
+  - Sanitation design proposals (currently probabilistic/random)
+  - Household SMS nudges for consented households
+- A dashboard-driven “digital twin” view showing health and predictions
+
+The system is orchestrated through a staged workflow:
+wipe → seed → backfill → tick → twin
+
+2) Repository structure (key files)
+Root
+- README.md — project overview + setup notes
+- package.json / package-lock.json — dependencies and scripts
+- next.config.ts, tsconfig.json — Next.js + TS config
+- prisma/ — Prisma config and schema
+  - prisma/schema.prisma — data model
+- src/ — application code
+- public/ — static assets (including story images)
+- docs/ — research document (KWALI WASH RESEARCH.docx)
+
+App Router (src/app)
+- page.tsx — landing/marketing story page
+- dashboard/* — role dashboards
+  - dashboard/layout.tsx — shared dashboard shell (sidebar + guide overlay)
+  - dashboard/map/page.tsx — activity map
+  - dashboard/lab/page.tsx — AI Intelligence Lab (proposal review)
+  - dashboard/steward/page.tsx — steward telemetry view
+  - dashboard/control/page.tsx — simulation control console
+- api/* — backend endpoints
+  - api/simulate/* — simulation endpoints (wipe, seed, backfill, tick, error)
+  - api/twin/* — digital twin + AI endpoints (process, process-one, status)
+
+Core libs (src/lib)
+- lib/prisma.ts — Prisma client setup (SQLite)
+- lib/simulate.ts — seed/tick/backfill/wipe logic
+- lib/digitalTwin.ts — Gemini-driven twin processing logic
+
+UI components (src/components)
+- WashMap.tsx — Leaflet map rendering + overlay controls
+- MapWrapper.tsx — map state + terminal detail panel wrapper
+- TerminalDetailPanel.tsx — bottom overlay with metrics & charts
+- RevenueChart.tsx — Recharts line chart for revenue
+- GuideOverlay.tsx — step-by-step walkthrough overlay
+
+3) Tech stack
+- Next.js (App Router) + React (React 19)
+- TypeScript (strict)
+- Tailwind CSS
+- Framer Motion (animations, guided overlay)
+- Leaflet via react-leaflet (dark map tiles, clickable markers)
+- Recharts (small time-series visualizations)
+- Prisma ORM + SQLite (dev.db)
+- Gemini via @google/genai
+
+Dependencies are visible in package.json:
+- @google/genai
+- prisma, @prisma/client, @prisma/adapter-better-sqlite3
+- react-leaflet, leaflet
+- framer-motion
+- recharts
+
+4) Data model (Prisma schema)
+File: prisma/schema.prisma
+
+Enum
+- Role: ADMIN, STEWARD, PANEL
+
+Models
+- User
+  - id (uuid)
+  - email (unique)
+  - password_hash
+  - role (default STEWARD)
+  - createdAt, updatedAt
+
+- Terminal
+  - id (uuid)
+  - community_name
+  - latitude, longitude
+  - createdAt, updatedAt
+  - relations:
+    - sensorReadings[]
+    - stewards[]
+    - stewardActivities[]
+    - households[]
+    - proposals[]
+
+- Steward
+  - id (uuid)
+  - name
+  - status (default ACTIVE)
+  - eligibility_checklist_completed (default false)
+  - userId → User
+  - terminalId → Terminal
+
+- SensorReading
+  - id (uuid)
+  - timestamp
+  - flow_rate
+  - water_quality (PASS/FAIL as strings)
+  - energy_use
+  - pump_status (OPERATIONAL/DEGRADED/BROKEN as strings)
+  - terminalId → Terminal
+
+- StewardActivity
+  - id (uuid)
+  - timestamp
+  - transactions_count
+  - revenue
+  - reported_issue (optional)
+  - stewardId → Steward
+  - terminalId → Terminal
+
+- Household
+  - id (uuid)
+  - community_name
+  - stated_barrier (distance/cost/distrust/forgetfulness/cultural preference)
+  - consent_logged (boolean)
+  - createdAt
+  - terminalId → Terminal
+  - relations:
+    - contact?
+    - nudges[]
+
+- HouseholdContact
+  - id (uuid)
+  - phone_number
+  - householdId (unique)
+
+- Proposal
+  - id (uuid)
+  - type (string, e.g., business_model, sanitation_design)
+  - generated_content
+  - status (default PENDING; intended values: PENDING/APPROVED/REJECTED/REFINED)
+  - reviewer_notes?
+  - createdAt
+  - terminalId → Terminal
+
+- Nudge
+  - id (uuid)
+  - message_text
+  - channel (e.g., sms)
+  - status (default GENERATED; intended: GENERATED/DELIVERED)
+  - createdAt
+  - householdId → Household
+
+5) Simulation engine
+File: src/lib/simulate.ts
+
+Constants
+- COMMUNITIES: 15 community names
+- BARRIERS: distance, cost, distrust, forgetfulness, cultural preference
+
+5.1 wipeDatabase()
+Deletes simulation data in reverse dependency order:
+- Nudge
+- Proposal
+- HouseholdContact
+- Household
+- SensorReading
+- StewardActivity
+- Steward
+- Terminal
+- User
+
+5.2 seedSimulation()
+If terminalCount === 0:
+1) Create default users if none exist:
+   - admin@kwali.gov.ng (role ADMIN)
+   - panel@kwali.gov.ng (role PANEL)
+   Passwords are set to "password" in this prototype.
+2) For each community (15):
+   - Create Terminal with latitude/longitude around Kwali area
+   - Create a steward user per community
+   - Create Steward record linking that user to the terminal
+   - Create 5–10 households per terminal
+     - consent_logged is ~70%
+     - stated_barrier randomly from BARRIERS
+     - if consent_logged: create HouseholdContact with a random +234 phone number
+
+5.3 simulateTick(dateOverride?, options?)
+Creates one tick/day of telemetry for ALL terminals.
+- timestamp = dateOverride || new Date()
+- Determine pump_status probabilistically:
+  - BROKEN if rand > 0.95
+  - DEGRADED if rand > 0.85
+  - else OPERATIONAL
+- Determine water_quality:
+  - FAIL with ~10% chance, else PASS
+
+Overrides (options?: TickOptions)
+- forceFailure: string community_name to affect
+  - if set, overrides pump_status using failureType if provided
+  - and overrides water_quality using waterQualityFail if provided
+- revenueMultiplier scales transactions_count and therefore revenue
+
+Telemetry fields
+- flow_rate
+  - 0 if BROKEN
+  - degraded: Math.random()*5 + 2
+  - operational: Math.random()*10 + 10
+- energy_use
+  - 0 if BROKEN
+  - else flow_rate * 2.5
+
+StewardActivity generation
+- If terminal has a steward:
+  - transactions_count is 0 for BROKEN, else random between 10–59
+  - revenue = transactions_count * 50
+  - reported_issue can be:
+    - Pump is not dispensing water (BROKEN)
+    - Water looks cloudy (FAIL quality)
+    - Long queues today (rare random)
+
+5.4 runBackfill(days)
+- Calls seedSimulation()
+- Simulates days ticks going backwards (days..1) and one tick for today
+
+6) Backend API endpoints
+All endpoints live under src/app/api.
+
+6.1 Simulation endpoints
+- POST /api/simulate/wipe
+  - calls wipeDatabase()
+
+- POST /api/simulate/seed
+  - calls seedSimulation()
+
+- POST /api/simulate/backfill
+  - body: { days }
+  - defaults are set in route (route uses body.days || 30)
+  - calls runBackfill(days)
+
+- POST /api/simulate/tick
+  - body:
+    - days (number)
+    - forceFailure (community_name string)
+    - failureType ('DEGRADED' | 'BROKEN' | 'OPERATIONAL')
+    - waterQualityFail (boolean)
+    - revenueMultiplier (number)
+  - calls simulateTick for each day
+
+- POST /api/simulate/error
+  - simulates Gemini failure / rate-limit demo
+  - returns 429-like JSON error
+
+6.2 Digital twin endpoints
+- POST /api/twin/process
+  - calls processDigitalTwin() in src/lib/digitalTwin.ts
+
+- POST /api/twin/process-one
+  - “process one terminal at a time” mode
+  - finds first terminal with sensorReadings present and without an existing PENDING business_model proposal
+  - generates exactly one proposal (business_model) for that terminal
+  - returns { terminal, content, remaining, total } or { complete: true }
+
+- GET /api/twin/status
+  - returns counts:
+    - totalTerminals
+    - processedTerminals (terminals with at least one pending proposal)
+    - remainingTerminals
+    - totalProposals
+    - totalNudges
+
+7) Digital twin + Gemini AI logic
+File: src/lib/digitalTwin.ts
+
+7.1 Gemini initialization
+- ai is created from process.env.GEMINI_API_KEY using GoogleGenAI
+- if missing, ai stays null and generation returns fallback text
+
+7.2 Approved business model types
+Hard-coded list of 8 strategies:
+1) Pay-per-fetch / metered sales
+2) Treated water resale
+3) Bulk delivery service
+4) Bundled hygiene retail
+5) Agricultural/livestock water sales
+6) Solar/phone-charging add-on
+7) Subscription/cooperative membership
+8) Maintenance subcontracting
+
+7.3 processDigitalTwin() flow (bulk)
+1) Fetch terminals with:
+   - last 7 sensorReadings (most recent first)
+   - last 7 stewardActivities
+   - households
+2) Loop terminals (with a safety cap on AI calls):
+   - aiRequestsMade increments per Gemini call
+   - stops if aiRequestsMade >= 3
+3) For each terminal:
+   - compute latestReading
+   - determine isFailing if pump_status is BROKEN or DEGRADED
+   - compute avgRevenue from stewardActivities
+
+Business model generation (conditional)
+- if isFailing OR avgRevenue < 1000:
+  - create proposal only if no existing PENDING business_model exists
+  - prompt asks Gemini to pick exactly ONE model from the approved list
+  - prompt asks for 2–3 sentences and requires the output to start with model name
+
+Sanitation design generation (probabilistic)
+- if Math.random() > 0.8 (approx 20% chance) and aiRequestsMade < 3:
+  - create sanitation_design proposal if no existing pending one
+
+Household SMS nudges generation (consent-based)
+- For each household on the terminal:
+  - skip if !household.consent_logged
+  - limit to 1 nudge per terminal per run (nudgeCount >= 1)
+  - prompt asks for SMS message under 100 characters
+  - create Nudge with channel='sms', status='GENERATED'
+
+7.4 Fallback behavior
+If Gemini fails (rate limits, etc.), content generation returns mock but realistic text based on which prompt type was requested.
+This keeps the UI usable during demo/testing.
+
+8) Frontend dashboards & components
+8.1 Dashboard shell + guided overlay
+File: src/app/dashboard/layout.tsx
+- Client component with sidebar navigation
+- Uses GuideProvider and GuideOverlay to show contextual walkthrough steps
+- Sidebar routes:
+  - /dashboard/map
+  - /dashboard/lab
+  - /dashboard/steward
+  - /dashboard/control
+
+8.2 Activity Map (Admin)
+File: src/app/dashboard/map/page.tsx
+- Server component (async) that fetches terminals with:
+  - stewards
+  - sensorReadings ordered desc, take 14
+  - stewardActivities ordered desc, take 1
+- Renders MapWrapper
+
+Components
+- src/components/MapWrapper.tsx
+  - client wrapper that holds selectedTerminal state
+  - renders WashMap and TerminalDetailPanel
+
+- src/components/WashMap.tsx
+  - renders Leaflet MapContainer with CARTO dark tiles
+  - CircleMarker nodes colored by pump_status:
+    - Operational => blue
+    - Degraded => amber
+    - Broken => red
+  - overlay controls:
+    - showSensors toggle
+    - showPredictions toggle
+  - prediction layer uses heuristic:
+    - predictFailure if isDegraded OR revenueDrop heuristic (latest steward revenue < 1000)
+  - clicking a node selects terminal and opens TerminalDetailPanel
+
+8.3 Terminal detail panel
+File: src/components/TerminalDetailPanel.tsx
+- Slide-up overlay with terminal metrics
+- Displays:
+  - pump_status badge
+  - flow_rate and energy_use mini line charts (last readings)
+  - assigned steward name
+  - water_quality indicator
+  - AI diagnostics summary computed from simple conditions:
+    - Broken => immediate maintenance + recalibration message
+    - Degraded => predictive maintenance warning message
+    - else => optimal parameters message
+
+8.4 Intelligence Lab (Panel)
+File: src/app/dashboard/lab/page.tsx
+- Server component that fetches all proposals ordered by createdAt desc
+- For each proposal, shows:
+  - type badge (business_model vs sanitation_design)
+  - generated content
+  - simulated stakeholder feedback section (random)
+  - action buttons: Approve Node / Recalibrate / Reject (UI only; no persistence in shown code)
+- Detects generation failure by checking if generated_content contains "Failed to generate".
+
+8.5 Steward Network
+File: src/app/dashboard/steward/page.tsx
+- Server component that fetches first steward + its terminal data
+- If no steward: shows NO_STEWARD_DATA_FOUND message
+- Displays:
+  - live sensor widget (flow, energy, water_quality)
+  - weekly revenue using RevenueChart
+  - historical steward activities with issue highlighting
+
+RevenueChart
+- src/components/RevenueChart.tsx uses recharts LineChart
+- expects chronological ordering; it reverses for display
+
+8.6 Simulation Control console (Director mode)
+File: src/app/dashboard/control/page.tsx
+Client component implementing a multi-phase staged workflow.
+
+Phases:
+1) wipe → POST /api/simulate/wipe
+2) seed → POST /api/simulate/seed
+3) backfill → POST /api/simulate/backfill with {days:30}
+4) tick → POST /api/simulate/tick with operator-configurable overrides
+   - days to advance
+   - force telemetry anomaly community
+   - forced pump anomaly severity
+   - forced water quality failure
+   - revenue multiplier
+5) twin → repeatedly POST /api/twin/process-one (one terminal per click)
+
+The console includes:
+- animated progress bars for phases
+- scanline styling
+- a live log console (time-stamped entries)
+- a twin status bar once AI processing begins
+
+9) Environment variables
+File: .env (referenced in README)
+- GEMINI_API_KEY
+- DATABASE_URL="file:./dev.db"
+
+Note: prisma adapter uses ./dev.db relative to working directory via src/lib/prisma.ts.
+
+10) Local setup/runbook
+Typical workflow from README + app:
+1) Install dependencies:
+   npm install
+2) Configure .env with GEMINI_API_KEY.
+3) Initialize DB:
+   npx prisma db push
+4) Start dev server:
+   npm run dev
+5) Use UI:
+   - Open /dashboard/control
+   - Run phases in order.
+   - For AI step, use “Process Next” to generate proposals one terminal at a time.
+
+API shortcuts (optional):
+- POST /api/simulate/backfill to create history
+- POST /api/twin/process to bulk-generate proposals (with built-in AI call limits)
+
+11) Implementation notes / limitations (as currently coded)
+- Gemini is rate-limited defensively:
+  - processDigitalTwin() stops after aiRequestsMade >= 3
+- Twin diagnostics shown in TerminalDetailPanel are heuristic, not Gemini-generated.
+- Lab approval/recalibrate/reject buttons do not persist changes in the code shown.
+- process-one creates only business_model proposals; sanitation_design and nudges are handled in bulk processDigitalTwin() in src/lib/digitalTwin.ts.
+- Simulation telemetry generation is probabilistic; results vary unless you force overrides in tick.
+
+End of documentation.
+
