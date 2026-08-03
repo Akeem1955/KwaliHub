@@ -26,7 +26,7 @@ export default async function StewardDashboard() {
   const statusColor = isBroken ? 'bg-red-500/10 text-red-400 border-red-500/30' : isDegraded ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' : 'bg-blue-500/10 text-blue-400 border-blue-500/30';
   const statusGlow = isBroken ? 'glow-red' : isDegraded ? 'shadow-[0_0_15px_rgba(245,158,11,0.3)]' : 'glow-blue';
 
-  const chartData = steward.terminal.stewardActivities.map(act => ({
+  const chartData = steward.terminal.stewardActivities.map((act: { timestamp: Date; revenue: number }) => ({
     date: new Date(act.timestamp).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }),
     revenue: act.revenue
   }));
@@ -97,7 +97,7 @@ export default async function StewardDashboard() {
         <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Historical Activity Log</h2>
         <div className="bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-800 overflow-hidden">
           <ul className="divide-y divide-slate-800/50">
-            {steward.terminal.stewardActivities.map((act) => {
+            {steward.terminal.stewardActivities.map((act: { id: string; timestamp: Date; reported_issue: string | null; revenue: number; transactions_count: number }) => {
               const hasIssue = !!act.reported_issue;
               return (
                 <li key={act.id} className="p-5 flex items-center justify-between hover:bg-slate-800/50 transition-colors">
