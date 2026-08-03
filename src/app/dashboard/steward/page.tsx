@@ -31,7 +31,7 @@ export default async function StewardDashboard() {
     revenue: act.revenue
   }));
 
-  const totalWeeklyRevenue = chartData.reduce((sum, d) => sum + d.revenue, 0);
+  const totalWeeklyRevenue = chartData.reduce((sum: number, d: { revenue: number }) => sum + d.revenue, 0);
 
   return (
     <div className="h-full w-full p-8 overflow-y-auto bg-dot-matrix relative">
