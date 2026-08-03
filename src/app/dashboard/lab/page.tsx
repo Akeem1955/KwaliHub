@@ -17,7 +17,7 @@ export default async function WashLabReview() {
         <div className="flex justify-between items-end mb-8 border-b border-slate-800 pb-6">
           <div>
             <h1 className="text-3xl font-black text-white tracking-tight drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">AI Intelligence Lab</h1>
-            <p className="text-slate-400 mt-1 font-medium">Review Digital Twin Generative AI Anomalies & Proposals</p>
+            <p className="text-slate-400 mt-1 font-medium">Review Digital Twin Generative AI Anomalies &amp; Proposals</p>
           </div>
         </div>
 
@@ -29,7 +29,7 @@ export default async function WashLabReview() {
           </div>
         ) : (
           <div className="space-y-6">
-            {proposals.map(proposal => {
+            {proposals.map((proposal: { id: string; generated_content: string; type: string; status: string; createdAt: Date; terminal: { community_name: string } }) => {
               const isFailed = proposal.generated_content.includes("Failed to generate");
               const glowClass = isFailed ? 'glow-red' : 'glow-blue';
               const badgeClass = proposal.type === 'business_model' ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
@@ -99,3 +99,4 @@ export default async function WashLabReview() {
     </div>
   );
 }
+
