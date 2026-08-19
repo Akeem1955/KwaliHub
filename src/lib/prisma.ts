@@ -1,4 +1,14 @@
-import { PrismaClient } from '@prisma/client'
+// Load PrismaClient dynamically to handle different packaging/export shapes
+// (some Prisma versions export a default, others named). Use require so
+// TypeScript won't error during build when the package shape differs.
+let PrismaClient: any
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const pkg = require('@prisma/client')
+  PrismaClient = pkg.PrismaClient ?? pkg.default ?? pkg
+} catch (e) {
+  PrismaClient = undefined
+}
 
 let prismaClient: any = null
 
