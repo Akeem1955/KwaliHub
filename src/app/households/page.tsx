@@ -4,21 +4,33 @@ import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 
 export default async function HouseholdsLogPage() {
-  const nudges = await prisma.nudge.findMany({
-    include: {
-      household: {
-        include: {
-          terminal: true,
-          contact: true
+  let nudges: any[] = [];
+  let households: any[] = [];
+  try {
+    nudges = await prisma.nudge.findMany({
+      include: {
+        household: {
+          include: {
+            terminal: true,
+            contact: true
+          }
         }
-      }
-    },
-    orderBy: { createdAt: 'desc' }
-  });
+      },
+      orderBy: { createdAt: 'desc' }
+    });
 
-  const households = await prisma.household.findMany({
-    include: { terminal: true }
-  });
+    households = await prisma.household.findMany({
+      include: { terminal: true }
+    });
+  } catch (err) {
+    console.error('Prisma error (households):', err);
+    return (
+      <div className="p-8">
+        <h2 className="text-xl font-bold">Service unavailable</h2>
+        <p className="text-sm text-slate-600 mt-2">Database is not configured in this environment. Configure `DATABASE_URL` or enable the SQLite adapter to view this page.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 min-h-screen bg-slate-50 text-slate-900 font-sans">

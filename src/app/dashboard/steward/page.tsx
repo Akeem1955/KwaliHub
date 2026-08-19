@@ -4,16 +4,27 @@ import RevenueChart from '@/components/RevenueChart';
 export const dynamic = 'force-dynamic';
 
 export default async function StewardDashboard() {
-  const steward = await prisma.steward.findFirst({
-    include: {
-      terminal: {
-        include: {
-          sensorReadings: { orderBy: { timestamp: 'desc' }, take: 5 },
-          stewardActivities: { orderBy: { timestamp: 'desc' }, take: 7 }
+  let steward: any = null;
+  try {
+    steward = await prisma.steward.findFirst({
+      include: {
+        terminal: {
+          include: {
+            sensorReadings: { orderBy: { timestamp: 'desc' }, take: 5 },
+            stewardActivities: { orderBy: { timestamp: 'desc' }, take: 7 }
+          }
         }
       }
-    }
-  });
+    });
+  } catch (err) {
+    console.error('Prisma error (steward):', err);
+    return (
+      <div className="p-8">
+        <h2 className="text-xl font-bold">Service unavailable</h2>
+        <p className="text-sm text-slate-600 mt-2">Database is not configured in this environment. Configure `DATABASE_URL` or enable the SQLite adapter to view this page.</p>
+      </div>
+    );
+  }
 
   if (!steward) {
     return <div className="p-8 text-slate-500 font-mono">NO_STEWARD_DATA_FOUND. RUN_BACKFILL_SEQUENCE.</div>;

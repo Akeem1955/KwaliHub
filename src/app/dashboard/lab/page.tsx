@@ -4,10 +4,21 @@ import { BrainCircuit, MailWarning, FileText } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export default async function WashLabReview() {
-  const proposals = await prisma.proposal.findMany({
-    include: { terminal: true },
-    orderBy: { createdAt: 'desc' }
-  });
+  let proposals: any[] = [];
+  try {
+    proposals = await prisma.proposal.findMany({
+      include: { terminal: true },
+      orderBy: { createdAt: 'desc' }
+    });
+  } catch (err) {
+    console.error('Prisma error (lab):', err);
+    return (
+      <div className="p-8">
+        <h2 className="text-xl font-bold">Service unavailable</h2>
+        <p className="text-sm text-slate-600 mt-2">Database is not configured in this environment. Configure `DATABASE_URL` or enable the SQLite adapter to view this page.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full w-full p-8 overflow-y-auto bg-dot-matrix relative">
