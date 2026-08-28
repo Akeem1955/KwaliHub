@@ -129,10 +129,10 @@ export async function simulateTick(dateOverride?: Date, options?: TickOptions) {
     let water_quality = Math.random() > 0.9 ? "FAIL" : "PASS"; // 10% chance of bad quality
 
     if (options?.forceFailure === terminal.community_name) {
-      if (options.failureType) {
+      if (options?.failureType) {
         pump_status = options.failureType;
       }
-      if (options.waterQualityFail !== undefined) {
+      if (options?.waterQualityFail !== undefined) {
         water_quality = options.waterQualityFail ? "FAIL" : "PASS";
       }
     }
@@ -156,7 +156,7 @@ export async function simulateTick(dateOverride?: Date, options?: TickOptions) {
       const steward = terminal.stewards[0];
       let transactions = pump_status === "BROKEN" ? 0 : Math.floor(Math.random() * 50) + 10;
       if (options?.revenueMultiplier !== undefined) {
-        transactions = Math.floor(transactions * options.revenueMultiplier);
+        transactions = Math.floor(transactions * (options.revenueMultiplier as number));
       }
       const revenue = transactions * 50; // 50 Naira per transaction
       

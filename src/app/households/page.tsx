@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 
@@ -37,7 +39,7 @@ export default async function HouseholdsLogPage() {
           <div className="lg:col-span-1">
             <h2 className="text-lg font-bold text-slate-800 mb-4">Household Records</h2>
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 divide-y divide-slate-100 h-[600px] overflow-y-auto">
-              {households.map(h => (
+              {households.map((h: { id: string; community_name: string; consent_logged: boolean; stated_barrier: string }) => (
                 <div key={h.id} className="p-5 hover:bg-slate-50 transition-colors">
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-bold text-slate-800 text-sm">{h.community_name} HH</span>
@@ -73,7 +75,7 @@ export default async function HouseholdsLogPage() {
                         No nudges generated yet. Run the Digital Twin process to dispatch messages.
                       </td>
                     </tr>
-                  ) : nudges.map(nudge => (
+                  ) : nudges.map((nudge: any) => (
                     <tr key={nudge.id} className="hover:bg-slate-50 transition-colors">
                       <td className="p-5 align-top">
                         <div className="font-mono text-xs text-slate-400 mb-1.5 bg-slate-100 inline-block px-1.5 py-0.5 rounded">{nudge.householdId.slice(0, 8)}</div>

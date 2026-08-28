@@ -19,7 +19,7 @@ export default function RevenueChart({ data }: Props) {
             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
             labelStyle={{ color: '#64748b', fontSize: '12px' }}
             itemStyle={{ color: '#4f46e5', fontWeight: 'bold' }}
-            formatter={(value: any) => [`₦${value}`, 'Revenue']}
+            formatter={(value) => [`₦${value}`, 'Revenue']}
           />
           <Line 
             type="monotone" 

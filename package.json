@@ -4,13 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@google/genai": "^2.10.0",
-    "@prisma/adapter-better-sqlite3": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@types/leaflet": "^1.9.21",
     "framer-motion": "^12.42.2",
@@ -23,6 +22,7 @@
     "recharts": "^3.9.2"
   },
   "devDependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
     "@tailwindcss/postcss": "^4",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",

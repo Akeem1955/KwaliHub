@@ -41,10 +41,10 @@ export default function WashMap({ terminals, onSelectTerminal }: WashMapProps) {
         </label>
       </div>
 
-      <MapContainer center={center} zoom={8} scrollWheelZoom={false} className="h-full w-full z-0 bg-[#0B0C10] dark-tiles">
+      <MapContainer center={center} zoom={8} scrollWheelZoom={false} className="h-full w-full z-0 bg-[#0B0C10]">
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
         {terminals.map(t => {
           const latest = t.sensorReadings?.[0];
