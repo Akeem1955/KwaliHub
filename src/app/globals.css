@@ -28,4 +28,9 @@ body {
   .glow-emerald {
     box-shadow: 0 0 20px 5px rgba(16, 185, 129, 0.4);
   }
+
+  /* Inverted Dark-mode styling for OpenStreetMap free tiles */
+  .dark-tiles .leaflet-tile {
+    filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+  }
 }
