@@ -1,9 +1,7 @@
-// Load PrismaClient dynamically to handle different packaging/export shapes
-// (some Prisma versions export a default, others named). Use require so
-// TypeScript won't error during build when the package shape differs.
+import path from 'path';
+
 let PrismaClient: any
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const pkg = require('@prisma/client')
   PrismaClient = pkg.PrismaClient ?? pkg.default ?? pkg
 } catch (e) {
@@ -12,40 +10,32 @@ try {
 
 let prismaClient: any = null
 
-if (process.env.NODE_ENV !== 'production') {
-  // Development: use better-sqlite3 adapter (native). It's a dev-only dependency.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+function getSqliteAdapter(dbUrl?: string) {
   const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
-  const adapter = new PrismaBetterSqlite3({ url: './dev.db' })
-  prismaClient = new PrismaClient({ adapter } as any)
-} else {
-  // Production: prefer a remote DATABASE_URL (postgres/mysql). If provided
-  // and not a file: URL, construct PrismaClient normally. If no suitable
-  // DATABASE_URL is present, export a proxy that throws a clear runtime error
-  // so builds succeed on platforms that don't install devDependencies.
-  const dbUrl = process.env.DATABASE_URL
-  if (dbUrl) {
-    if (dbUrl.startsWith('file:')) {
-      // Try to load the sqlite adapter if available. In CI/prod where
-      // devDependencies are not installed, this will throw and we fallback
-      // to the proxy to avoid build-time crashes.
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3')
-        const adapter = new PrismaBetterSqlite3({ url: dbUrl.replace('file:', '') || './dev.db' })
-        prismaClient = new PrismaClient({ adapter } as any)
-      } catch (e) {
-        const message = `Prisma sqlite adapter not available in this environment. To deploy, set a non-file DATABASE_URL (e.g. Postgres) or install @prisma/adapter-better-sqlite3 as a production dependency.`
-        prismaClient = new Proxy({}, { get() { throw new Error(message) } })
-      }
-    } else {
-      prismaClient = new PrismaClient()
-    }
+  let rawPath = (dbUrl || './dev.db').replace(/^file:/, '').trim()
+  if (!rawPath) rawPath = './dev.db'
+  const resolvedPath = path.isAbsolute(rawPath) ? rawPath : path.join(process.cwd(), rawPath)
+  return new PrismaBetterSqlite3({ url: resolvedPath })
+}
+
+const dbUrl = process.env.DATABASE_URL || 'file:./dev.db'
+
+try {
+  if (dbUrl.startsWith('file:')) {
+    const adapter = getSqliteAdapter(dbUrl)
+    prismaClient = new PrismaClient({ adapter } as any)
   } else {
-    const message = `Prisma client not configured for production. Set a non-file DATABASE_URL (e.g. a Postgres URL) or move @prisma/adapter-better-sqlite3 into dependencies.`
+    prismaClient = new PrismaClient()
+  }
+} catch (error) {
+  console.warn('Prisma initialization fallback:', error)
+  try {
+    const adapter = getSqliteAdapter('./dev.db')
+    prismaClient = new PrismaClient({ adapter } as any)
+  } catch (err: any) {
     prismaClient = new Proxy({}, {
       get() {
-        throw new Error(message)
+        throw new Error(`Prisma client failed to initialize: ${err?.message || err}`)
       }
     })
   }
