@@ -1,36 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0B0C10; /* Very deep space navy/black */
-  --foreground: #f8fafc;
+  --background: #F8F9FA;
+  --foreground: #202124;
 }
 
 body {
-  background-color: var(--background);
   color: var(--foreground);
+  background-color: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Custom UI Utilities for the Cyber Theme */
-@layer utilities {
-  .bg-dot-matrix {
-    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-    background-size: 16px 16px;
-  }
-  
-  .glow-red {
-    box-shadow: 0 0 20px 5px rgba(220, 38, 38, 0.4);
-  }
-  
-  .glow-blue {
-    box-shadow: 0 0 20px 5px rgba(37, 99, 235, 0.4);
-  }
-  
-  .glow-emerald {
-    box-shadow: 0 0 20px 5px rgba(16, 185, 129, 0.4);
-  }
 
-  /* Inverted Dark-mode styling for OpenStreetMap tiles */
-  .dark-tiles .leaflet-tile {
-    filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
-  }
-}

@@ -4,34 +4,29 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@google/genai": "^2.10.0",
-    "@prisma/adapter-better-sqlite3": "^7.8.0",
-    "@prisma/client": "^7.8.0",
-    "@types/leaflet": "^1.9.21",
-    "better-sqlite3": "^11.8.1",
-    "framer-motion": "^12.42.2",
-    "leaflet": "^1.9.4",
+    "@googlemaps/js-api-loader": "^1.16.8",
     "lucide-react": "^1.23.0",
     "next": "16.2.10",
+    "pg": "^8.13.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-leaflet": "^5.0.0",
     "recharts": "^3.9.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/better-sqlite3": "^7.6.13",
+    "@types/google.maps": "^3.58.1",
     "@types/node": "^20",
+    "@types/pg": "^8.11.11",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
-    "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
