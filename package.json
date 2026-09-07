@@ -9,8 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@genkit-ai/googleai": "^1.28.0",
     "@google/genai": "^2.10.0",
     "@googlemaps/js-api-loader": "^1.16.8",
+    "@vis.gl/react-google-maps": "^1.10.0",
+    "firebase": "^12.18.0",
+    "framer-motion": "^13.2.0",
+    "genkit": "^1.42.0",
+    "gsap": "^3.15.0",
     "lucide-react": "^1.23.0",
     "next": "16.2.10",
     "pg": "^8.13.3",
