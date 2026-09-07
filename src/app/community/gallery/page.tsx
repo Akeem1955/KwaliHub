@@ -33,7 +33,7 @@ export default function CommunityGalleryPage() {
             Your Impact Gallery
           </h3>
           <p className={`text-sm sm:text-base mt-2 max-w-2xl ${isDark ? "text-white/60" : "text-slate-600"}`}>
-            See how your vital contributions are actively used by RUWASSA and NGOs to deploy repairs and keep Kwali safe.
+            See how your vital contributions are actively used by Water Board and NGOs to deploy repairs and keep Kwali safe.
           </p>
         </div>
 

@@ -98,7 +98,7 @@ export function InstitutionalProvider({ children }: { children: React.ReactNode 
         const savedTitle = localStorage.getItem("aquawatch-officer-title") || "WASH Systems Director";
         setOfficerTitleState(savedTitle);
 
-        const savedOrg = localStorage.getItem("aquawatch-officer-org") || "FCT RUWASSA";
+        const savedOrg = localStorage.getItem("aquawatch-officer-org") || "FCT Water Board";
         setOfficerOrgState(savedOrg);
 
         const savedId = localStorage.getItem("aquawatch-officer-id") || `RUW-FCT-${Date.now().toString().slice(-4)}`;

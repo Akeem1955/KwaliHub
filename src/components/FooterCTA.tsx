@@ -80,7 +80,7 @@ export function FooterCTA() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-slate-900">Engr. Babatunde Lawal</div>
-                  <div className="text-[11px] text-purple-700">Chief WASH Operations Officer · FCT RUWASSA</div>
+                  <div className="text-[11px] text-purple-700">Chief WASH Operations Officer · FCT Water Board</div>
                 </div>
               </div>
             </div>

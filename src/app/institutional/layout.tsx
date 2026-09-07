@@ -174,7 +174,7 @@ function InstitutionalLayoutInner({ children }: { children: React.ReactNode }) {
                 {officerName || "Institutional Officer"}
               </span>
               <span className={`text-[10px] truncate ${isDark ? "text-white/50" : "text-slate-500"}`}>
-                {officerOrg || "FCT RUWASSA"}
+                {officerOrg || "FCT Water Board"}
               </span>
             </div>
           </Link>
@@ -210,7 +210,7 @@ function InstitutionalLayoutInner({ children }: { children: React.ReactNode }) {
                   isDark ? "bg-white/10 text-[#1fcfab]" : "bg-slate-200 text-purple-700"
                 }`}
               >
-                RUWASSA
+                Water Board
               </span>
               <select
                 value={selectedWard}
@@ -287,7 +287,7 @@ function InstitutionalLayoutInner({ children }: { children: React.ReactNode }) {
             <div className="flex-1 text-xs">
               <p className="font-semibold">{toastMessage}</p>
               <p className={`mt-0.5 text-[10px] ${isDark ? "text-white/50" : "text-slate-500"}`}>
-                RUWASSA Regional Ledger synced
+                Water Board Regional Ledger synced
               </p>
             </div>
             <button

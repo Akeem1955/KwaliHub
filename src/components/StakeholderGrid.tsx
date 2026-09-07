@@ -30,7 +30,7 @@ export function StakeholderGrid() {
             </h2>
 
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-md">
-              One unified digital representation. Citizens, IoT edge nodes, field NGOs, and state water boards / RUWASSA plug into one synchronized twin that eliminates blind spots.
+              One unified digital representation. Citizens, IoT edge nodes, field NGOs, and state water boards / Water Board plug into one synchronized twin that eliminates blind spots.
             </p>
 
             {/* Quick Live Telemetry Strip from AquaTwin Story */}

@@ -79,7 +79,7 @@ export default function CommunitySettingsPage() {
           Scout Settings & Offline Protocols
         </h1>
         <p className={`text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed ${isDark ? "text-white/60" : "text-slate-600"}`}>
-          Configure your guardian credentials, data optimization for rural 2G/3G networks, and RUWASSA dispatch notification channels.
+          Configure your guardian credentials, data optimization for rural 2G/3G networks, and Water Board dispatch notification channels.
         </p>
       </div>
 
@@ -97,7 +97,7 @@ export default function CommunitySettingsPage() {
             Identity & Ward Assignment
           </h2>
           <p className={`text-xs mt-0.5 ${isDark ? "text-white/50" : "text-slate-500"}`}>
-            Used by RUWASSA engineers to confirm verification credentials when dispatching repair crews.
+            Used by Water Board engineers to confirm verification credentials when dispatching repair crews.
           </p>
         </div>
 
@@ -284,7 +284,7 @@ export default function CommunitySettingsPage() {
                 SMS Dispatch Code Generator
               </h4>
               <p className={`text-xs mt-0.5 ${isDark ? "text-white/50" : "text-slate-600"}`}>
-                When offline, allow generating 1-tap SMS codes sent to the Kwali RUWASSA gateway shortcode.
+                When offline, allow generating 1-tap SMS codes sent to the Kwali Water Board gateway shortcode.
               </p>
             </div>
             <button
@@ -330,7 +330,7 @@ export default function CommunitySettingsPage() {
           }`}>
             <div className="pr-4">
               <h4 className={`text-xs font-bold ${isDark ? "text-white" : "text-slate-900"}`}>
-                WhatsApp RUWASSA Dispatch Notifications
+                WhatsApp Water Board Dispatch Notifications
               </h4>
               <p className={`text-xs mt-0.5 ${isDark ? "text-white/50" : "text-slate-600"}`}>
                 Instant message when a government or donor repair crew is assigned to your logged incident.

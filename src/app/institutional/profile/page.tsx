@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { useInstitutional } from "../InstitutionalContext";
 
 const INSTITUTION_OPTIONS = [
-  "FCT RUWASSA (Rural Water Supply & Sanitation Agency)",
+  "FCT Water Board",
   "Kwali Area Council Water Resources Dept",
   "Federal Ministry of Water Resources & Sanitation",
   "UNICEF WASH Nigeria Mission",
@@ -260,7 +260,7 @@ export default function InstitutionalProfilePage() {
                 {officerName || "Institutional Officer"}
               </h2>
               <p className={`text-sm ${isDark ? "text-white/70" : "text-slate-600"}`}>
-                {officerTitle || "WASH Operations Officer"} • <span className="font-semibold">{officerOrg || "FCT RUWASSA"}</span>
+                {officerTitle || "WASH Operations Officer"} • <span className="font-semibold">{officerOrg || "FCT Water Board"}</span>
               </p>
             </div>
           </div>

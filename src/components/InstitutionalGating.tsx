@@ -78,7 +78,7 @@ export function InstitutionalGating() {
                         <input
                           required
                           type="text"
-                          placeholder="e.g. Federal Ministry of Water Resources / RUWASSA / WaterAid Nigeria"
+                          placeholder="e.g. Federal Ministry of Water Resources / Water Board / WaterAid Nigeria"
                           className="w-full rounded-lg border border-purple-400/30 bg-[#180E2E] px-3.5 py-2.5 text-xs text-white placeholder:text-purple-300/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 transition-colors"
                         />
                       </div>
@@ -90,7 +90,7 @@ export function InstitutionalGating() {
                         <input
                           required
                           type="email"
-                          placeholder="director@ruwassa.gov.ng or wash@ngo.org.ng"
+                          placeholder="director@waterboard.gov.ng or wash@ngo.org.ng"
                           className="w-full rounded-lg border border-purple-400/30 bg-[#180E2E] px-3.5 py-2.5 text-xs text-white placeholder:text-purple-300/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 transition-colors"
                         />
                       </div>

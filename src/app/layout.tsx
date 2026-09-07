@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     "Digital Twin",
     "Rural Water Security",
     "IoT Hydrology",
-    "RUWASSA FCT",
+    "Water Board FCT",
     "UN SDG 6",
   ],
 };

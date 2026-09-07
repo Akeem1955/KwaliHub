@@ -65,7 +65,7 @@ const STAGES: Stage[] = [
     id: 5,
     number: "05",
     name: "Implementation",
-    shortDesc: "RUWASSA technician dispatches & volunteer brigades",
+    shortDesc: "Water Board technician dispatches & volunteer brigades",
     fullDesc: "Prioritized work orders dispatched to government repair crews and community clean-up volunteers with precise GPS coordinates and equipment specifications.",
     badge: "Field Operations",
     metric: "Dispatched Work Orders",

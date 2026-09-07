@@ -174,7 +174,7 @@ export default function InstitutionalOverviewPage() {
                     : "bg-purple-50 border-purple-200 text-purple-700"
                 }`}
               >
-                RUWASSA Regional Command
+                Water Board Regional Command
               </span>
               <span className={`text-xs ${isDark ? "text-white/40" : "text-slate-400"}`}>•</span>
               <span className={`text-xs font-mono ${isDark ? "text-white/60" : "text-slate-600"}`}>

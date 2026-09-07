@@ -488,7 +488,7 @@ function Hero() {
                   : "bg-white border border-purple-200 text-purple-900 hover:bg-purple-50 shadow-sm"
               }`}
             >
-              For RUWASSA & NGOs
+              For Water Board & NGOs
             </Link>
           </div>
 
@@ -534,7 +534,7 @@ function Ticker() {
     "IoT Acoustic Sensors",
     "Google Gemini AI",
     "Digital Twin Simulator",
-    "RUWASSA FCT",
+    "Water Board FCT",
     "Community Water Guardians",
     "Real-time Borehole Health",
     "Kwali Area Council",
@@ -938,7 +938,7 @@ function Pipeline() {
       title: "Action & Feedback",
       sub: "Act",
       color: "#e8a94a",
-      desc: "RUWASSA technicians dispatch for borehole parts; Kwali LGA sanitation crews clear refuse heaps. Clean water flows and scouts earn XP.",
+      desc: "Water Board technicians dispatch for borehole parts; Kwali LGA sanitation crews clear refuse heaps. Clean water flows and scouts earn XP.",
       img: "/images/rural_borehole_solar.jpg",
       imgAlt: "Nigerian community member pumping clean water from a solar borehole",
     },
@@ -969,7 +969,7 @@ function Pipeline() {
             </span>
           </h2>
           <p className={`text-lg max-w-xl mx-auto reveal reveal-delay-2 ${isDark ? "text-white/40" : "text-slate-600"}`}>
-            A closed feedback loop connecting village scouts directly to RUWASSA technicians, eliminating guesswork.
+            A closed feedback loop connecting village scouts directly to Water Board technicians, eliminating guesswork.
           </p>
         </div>
 
@@ -1144,7 +1144,7 @@ function CommunitySection() {
                 {
                   icon: "🔔",
                   title: "Close the loop on both fronts",
-                  desc: "Get notified when RUWASSA repairs the borehole pump and when Kwali LGA sanitation crews clear the waste dump.",
+                  desc: "Get notified when Water Board repairs the borehole pump and when Kwali LGA sanitation crews clear the waste dump.",
                 },
                 {
                   icon: "📊",
@@ -1596,7 +1596,7 @@ function OrgsSection() {
                     AquaWatchAI · Institutional Command Console
                   </p>
                   <p className={`font-medium text-sm ${isDark ? "text-white" : "text-slate-900 font-bold"}`}>
-                    FCT RUWASSA / Kwali Water & Sanitation Authority · 42 Hubs
+                    FCT Water Board / Kwali Water & Sanitation Authority · 42 Hubs
                   </p>
                 </div>
                 <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${isDark ? "bg-[#1fcfab]/10 border-[#1fcfab]/25" : "bg-emerald-50 border-emerald-200"}`}>
@@ -1740,7 +1740,7 @@ function OrgsSection() {
             >
               <span className="text-sm">🏢</span>
               <span className="font-mono-label text-[10px] tracking-widest uppercase font-semibold">
-                For State Water Boards, RUWASSA & Donors
+                For State Water Boards & Donors
               </span>
             </div>
             <h2 className="font-display font-light leading-[0.95] mb-7 reveal reveal-delay-1 text-4xl md:text-5xl lg:text-6xl">
@@ -1823,7 +1823,7 @@ function OrgsSection() {
                     : "bg-purple-600 text-white hover:bg-purple-700"
                 }`}
               >
-                <span>Launch RUWASSA Command Console</span>
+                <span>Launch Water Board Command Console</span>
                 <span>→</span>
               </Link>
               <Link
@@ -1975,7 +1975,7 @@ function Impact() {
               quote:
                 "The digital twin predicted 3 pump failures before the impellers ground to powder. We avoided emergency redrilling contracts and redirected ₦1.8B in state funds into new pipe extensions.",
               name: "Engr. Babatunde Lawal",
-              role: "Chief WASH Operations Officer · FCT RUWASSA",
+              role: "Chief WASH Operations Officer · FCT Water Board",
               initials: "BL",
             },
             {
@@ -2059,7 +2059,7 @@ function Join() {
     },
     {
       emoji: "🏢",
-      tag: "RUWASSA / NGO / Donor",
+      tag: "Water Board / NGO / Donor",
       tagColor: isDark ? "#7c9ef8" : "#4f46e5",
       headline: ["I represent a state", "water authority / NGO"],
       desc: "Deploy across local government wards. Predict pump failures. Eliminate blind spots. Verify SDG 6 impact.",
@@ -2271,7 +2271,7 @@ function Footer() {
             },
             {
               title: "Governance",
-              links: ["FCT RUWASSA", "Kwali Area Council", "Community Mesh", "Security & Privacy"],
+              links: ["FCT Water Board", "Kwali Area Council", "Community Mesh", "Security & Privacy"],
             },
           ].map((col) => (
             <div key={col.title}>

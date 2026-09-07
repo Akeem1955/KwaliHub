@@ -22,7 +22,7 @@ const KWALI_WARDS = [
 ];
 
 const INSTITUTION_TYPES = [
-  "FCT RUWASSA (Rural Water Supply & Sanitation Agency)",
+  "FCT Water Board",
   "Kwali Area Council Water Resources Dept",
   "Federal Ministry of Water Resources",
   "UNICEF WASH Nigeria Mission",
@@ -155,7 +155,7 @@ export default function AuthPageContent({ initialMode }: { initialMode: AuthMode
             }
           } catch (_) {}
           setSuccessMessage(
-            "Terminal authentication granted. Welcome to FCT RUWASSA Operations Console. Redirecting..."
+            "Terminal authentication granted. Welcome to FCT Water Board Operations Console. Redirecting..."
           );
           setTimeout(() => {
             router.push("/institutional");
@@ -185,7 +185,7 @@ export default function AuthPageContent({ initialMode }: { initialMode: AuthMode
             localStorage.setItem("aquawatch-officer-id", `RUW-KW-${Date.now().toString().slice(-4)}`);
           } catch (_) {}
           setSuccessMessage(
-            "Institutional pilot registration verified. Initializing FCT RUWASSA Command Console..."
+            "Institutional pilot registration verified. Initializing FCT Water Board Command Console..."
           );
           setTimeout(() => {
             router.push("/institutional");
@@ -361,7 +361,7 @@ export default function AuthPageContent({ initialMode }: { initialMode: AuthMode
             }`}
           >
             <span>🏢</span>
-            <span>RUWASSA / NGO</span>
+            <span>Water Board / NGO</span>
           </button>
         </div>
 
@@ -700,7 +700,7 @@ export default function AuthPageContent({ initialMode }: { initialMode: AuthMode
                     <input
                       type="email"
                       required
-                      placeholder="e.g. babatunde.lawal@ruwassa.fct.gov.ng"
+                      placeholder="e.g. babatunde.lawal@waterboard.fct.gov.ng"
                       value={instEmail}
                       onChange={(e) => setInstEmail(e.target.value)}
                       className={`w-full px-4 py-3 rounded-xl border text-sm transition-all outline-none font-mono-label ${
@@ -756,7 +756,7 @@ export default function AuthPageContent({ initialMode }: { initialMode: AuthMode
                   >
                     <span className="text-base">🛡️</span>
                     <p>
-                      Authorized for RUWASSA FCT, Kwali Area Council Water Board, and vetted SDG 6 development donors only.
+                      Authorized for Water Board FCT, Kwali Area Council Water Board, and vetted SDG 6 development donors only.
                     </p>
                   </div>
                 </>
@@ -822,7 +822,7 @@ export default function AuthPageContent({ initialMode }: { initialMode: AuthMode
                     <input
                       type="email"
                       required
-                      placeholder="e.g. b.lawal@ruwassa.fct.gov.ng"
+                      placeholder="e.g. b.lawal@waterboard.fct.gov.ng"
                       value={instEmail}
                       onChange={(e) => setInstEmail(e.target.value)}
                       className={`w-full px-4 py-3 rounded-xl border text-sm transition-all outline-none font-mono-label ${

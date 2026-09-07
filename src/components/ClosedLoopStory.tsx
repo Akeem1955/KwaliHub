@@ -56,7 +56,7 @@ const incidentStages = [
     title: "Pinpointing the Single Failing Component",
     headline: "Confirms water is plentiful in the ground and names the exact seal to replace.",
     narration:
-      "The diagnostic assistant confirms the underground aquifer is full and stable at 85 meters. The issue is localized to a worn rubber impeller seal. It prescribes a straightforward ₦280,000 seal swap and stops the RUWASSA / Water Board team from wasting ₦3,800,000 on an unnecessary redrill.",
+      "The diagnostic assistant confirms the underground aquifer is full and stable at 85 meters. The issue is localized to a worn rubber impeller seal. It prescribes a straightforward ₦280,000 seal swap and stops the Water Board team from wasting ₦3,800,000 on an unnecessary redrill.",
     telemetry: "ROOT CAUSE: Impeller Sand Seal · ESTIMATED COST: ₦280,000 · AVOIDED WASTE: ₦3,520,000",
     badgeColor: "bg-purple-50 text-purple-800 border-purple-200",
   },
@@ -64,7 +64,7 @@ const incidentStages = [
     phase: "05",
     time: "08:30 AM",
     stageLabel: "Twin Simulation",
-    actor: "RUWASSA Operations Director",
+    actor: "Water Board Operations Director",
     actorType: "Vetted Institutional Clearance",
     badge: "Pre-Deployment Sandbox",
     title: "Pre-Deployment Scenario Simulation & Authorization",

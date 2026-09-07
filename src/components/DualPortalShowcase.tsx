@@ -228,7 +228,7 @@ export function DualPortalShowcase() {
                         <div className="rounded-xl bg-gradient-to-r from-emerald-950/80 to-[#140E26] border border-emerald-500/30 p-3.5">
                           <div className="flex items-center gap-2 text-emerald-400 text-xs font-semibold">
                             <span>✓</span>
-                            <span>Report Acted Upon by FCT RUWASSA</span>
+                            <span>Report Acted Upon by FCT Water Board</span>
                           </div>
                           <p className="mt-1 text-xs text-slate-200 leading-snug">
                             Fixed Kwali Solar Pump in 4 hours. <strong>340 community families</strong> have clean water restored.

@@ -241,7 +241,7 @@ export default function CommunityDashboard() {
         setSelectedPoint(newPoint);
         setKpis((prev) => ({ ...prev, wasteHazardsOpen: prev.wasteHazardsOpen + 1 }));
 
-        setToastMessage(`Incident dispatched to RUWASSA! +${bonusXp} XP credited.`);
+        setToastMessage(`Incident dispatched to Water Board! +${bonusXp} XP credited.`);
         setTimeout(() => setToastMessage(null), 5000);
 
         setDescription("");
